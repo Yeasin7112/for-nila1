@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>নিলা আমি তোমাকে অনেক ভালোবাসি</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --accent1:#ff6b81;
+      --accent2:#ffb86b;
+      --glass: rgba(255,255,255,0.06);
+      --card: rgba(255,255,255,0.03);
+      --text: #e6f0ff;
+      --hand: 'Brush Script MT', cursive;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: radial-gradient(1200px 800px at 10% 10%, rgba(255,107,129,0.06), transparent), var(--bg); color:var(--text)}
+
+    .wrap{min-height:100%;display:grid;place-items:center;padding:20px}
+    .card{width:min(600px,96vw);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:20px; padding:24px; box-shadow: 0 8px 30px rgba(2,6,23,0.7); display:grid;gap:18px;align-items:center;text-align:center}
+
+    .stage{height:300px;display:flex;align-items:center;justify-content:center;position:relative}
+    svg{width:200px;height:200px;cursor:pointer}
+
+    .heart-path{fill:none;stroke:var(--accent1);stroke-width:10;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 6px 18px rgba(255,107,129,0.15))}
+    .heart-fill{fill:transparent;}
+
+    .pulse{position:absolute;width:300px;height:300px;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+
+    .secret{margin-top:10px;padding:18px;background:var(--card);border-radius:12px;min-height:100px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+
+    .envelope{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+    .note{width:86%;max-width:460px;background:linear-gradient(180deg,#fff, #fff9);border-radius:10px;padding:18px;box-shadow:0 20px 40px rgba(2,6,23,0.5);transform:translateY(30px) scale(.97);opacity:0;transition:all 460ms cubic-bezier(.2,.9,.3,1);font-family:var(--hand);font-size:20px;color:#2c2333;white-space:pre-line;text-align:center}
+    .note.show{transform:translateY(0) scale(1);opacity:1;animation:heartbeat 1.2s infinite;}
+
+    @keyframes heartbeat {
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.08)}
+    }
+
+    .particle{position:absolute;width:12px;height:12px;transform-origin:center;pointer-events:none}
+
+    h1{font-size:22px;margin:0;}
+    p.lead{color:rgba(230,240,255,0.78);margin-top:6px;font-size:14px}
+
+    footer{margin-top:8px;color:rgba(230,240,255,0.48);font-size:13px}
+
+    @media (max-width:480px){
+      .stage{height:240px}
+      svg{width:160px;height:160px}
+      .note{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>💞 আমার নিলার জন্য 💞</h1>
+    <p class="lead">নিচের হার্টে ক্লিক করো — দেখো কী ঘটে ✨</p>
+
+    <div class="stage">
+      <div class="pulse" id="pulse"></div>
+      <svg id="heartSvg" viewBox="0 0 100 100" role="button" aria-label="Heart - click to open secret">
+        <path id="heartPath" class="heart-path" d="M50 84c-1.5-1.4-28-25-28-39.5C22 28 34 16 50 28c16-12 28 0 28 16.5C78 59 51.5 82.6 50 84z"/>
+        <path id="heartFill" class="heart-fill" d="M50 84c-1.5-1.4-28-25-28-39.5C22 28 34 16 50 28c16-12 28 0 28 16.5C78 59 51.5 82.6 50 84z"/>
+      </svg>
+    </div>
+
+    <div class="secret" id="secret">
+      <div class="envelope" id="envelope">
+        <div class="note" id="noteText">নিলা আমি তোমাকে অনেক ভালোবাসি 💖</div>
+      </div>
+    </div>
+
+    <footer>Yeasin ❤️ Nila</footer>
+  </div>
+</div>
+
+<script>
+const heartPath = document.getElementById('heartPath');
+const heartFill = document.getElementById('heartFill');
+const heartSvg = document.getElementById('heartSvg');
+const pulse = document.getElementById('pulse');
+const noteText = document.getElementById('noteText');
+
+function preparePath(){
+  const len = heartPath.getTotalLength();
+  heartPath.style.strokeDasharray = len;
+  heartPath.style.strokeDashoffset = len;
+  heartPath.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(.22,.9,.3,1)';
+  heartFill.style.transition = 'fill 480ms ease 1.6s';
+  heartFill.style.fill = 'transparent';
+}
+
+function spawnParticles(count=20){
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 21s-7.5-4.9-9.2-8.3C1.6 9.9 4 6 7.8 6 10 6 12 8 12 8s2-2 4.2-2c3.8 0 6.2 3.9 4.9 6.7C19.5 16.1 12 21 12 21z" fill="var(--accent1)"/></svg>';
+    document.body.appendChild(p);
+    const rect = heartSvg.getBoundingClientRect();
+    const startX = rect.left + rect.width/2 + (Math.random()-0.5)*30;
+    const startY = rect.top + rect.height/2 + (Math.random()-0.5)*30;
+    p.style.left = startX + 'px';
+    p.style.top = startY + 'px';
+    const dx = (Math.random()-0.5)*300;
+    const dy = -Math.random()*400 - 40;
+    const dur = 900 + Math.random()*900;
+    const rot = (Math.random()-0.5)*720;
+    p.animate([
+      {transform: `translate(0px,0px) rotate(0deg)`, opacity:1},
+      {transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity:0}
+    ],{duration: dur, easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish = ()=> p.remove();
+  }
+}
+
+function doPulse(){
+  pulse.animate([
+    {boxShadow: '0 0 0 0 rgba(255,107,129,0.08)', opacity:1, transform:'scale(0.9)'},
+    {boxShadow: '0 0 0 40px rgba(255,107,129,0.00)', opacity:0, transform:'scale(1.3)'}
+  ],{duration:1200,iterations:1,easing:'linear'});
+}
+
+function playSequence(){
+  preparePath();
+  const len = heartPath.getTotalLength();
+  heartPath.style.strokeDashoffset = len;
+  setTimeout(()=>{
+    heartPath.style.strokeDashoffset='0';
+    setTimeout(()=>{
+      heartFill.style.fill='url(#grad)';
+      heartSvg.animate([{transform:'scale(1)'},{transform:'scale(1.08)'},{transform:'scale(1)'}],{duration:480,easing:'cubic-bezier(.2,.9,.3,1)'});
+      spawnParticles(20);
+      doPulse();
+      setTimeout(()=>{
+        noteText.classList.add('show');
+        spawnParticles(26);
+      },700);
+    },1600);
+  },120);
+}
+
+heartSvg.addEventListener('click',()=>playSequence());
+
+(function insertSVGDefs(){
+  const ns='http://www.w3.org/2000/svg';
+  const g=document.createElementNS(ns,'svg');
+  g.setAttribute('style','position:absolute;width:0;height:0;pointer-events:none');
+  g.innerHTML=`<defs><linearGradient id="grad" x1="0" x2="1"><stop offset="0%" stop-color="#ff6b81"/><stop offset="100%" stop-color="#ffb86b"/></linearGradient></defs>`;
+  document.body.appendChild(g);
+})();
+
+window.addEventListener('load',()=>preparePath());
+</script>
+</body>
+</html>
